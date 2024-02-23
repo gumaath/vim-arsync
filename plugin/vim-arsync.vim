@@ -1,4 +1,4 @@
-" Vim plugin to handle async rsync synchronisation between hosts
+"so Vim plugin to handle async rsync synchronisation between hosts
 " Title: vim-arsync
 " Author: Ken Hasselmann
 " Date: 08/2019
@@ -6,6 +6,12 @@
 
 function! LoadConf()
     let l:conf_dict = {}
+    let l:current_file_dir = expand('%:p:h')
+    execute 'cd' l:current_file_dir
+    while !filereadable('.vim-arsync') && getcwd() != '/'
+        cd ..
+    endwhile
+
     let l:file_exists = filereadable('.vim-arsync')
 
     if l:file_exists > 0
@@ -38,6 +44,11 @@ function! LoadConf()
     endif
     if !has_key(l:conf_dict, "remote_options")
         let l:conf_dict['remote_options'] = "-vazre"
+    endif
+    if has_key(l:conf_dict, "relative_path")
+        if l:conf_dict['relative_path'] == 1
+            let l:conf_dict['remote_path'] = l:conf_dict['remote_path'] . "/" . GetLastDirectoryName()
+        endif
     endif
     return l:conf_dict
 endfunction
@@ -139,6 +150,17 @@ function! AutoSync()
             " echo 'Setting up auto sync to remote'
         endif
     endif
+endfunction
+
+function! GetLastDirectoryName()
+    " Get the current working directory
+    let cwd = getcwd()
+    " Split the path by directory separator (assuming Unix-like directory structure)
+    let parts = split(cwd, '/')
+    " Extract the last directory name
+    let last_dir = parts[-1]
+    " Return the last directory name
+    return last_dir
 endfunction
 
 if !executable('rsync')
