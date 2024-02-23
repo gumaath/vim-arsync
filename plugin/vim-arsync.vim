@@ -1,4 +1,4 @@
-"so Vim plugin to handle async rsync synchronisation between hosts
+"Vim plugin to handle async rsync synchronisation between hosts
 " Title: vim-arsync
 " Author: Ken Hasselmann
 " Date: 08/2019
