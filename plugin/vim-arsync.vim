@@ -6,7 +6,7 @@
 
 function! LoadConf()
     let l:conf_dict = {}
-    let l:current_file_dir = expand('%:p:h')
+    let l:current_file_dir = getcwd()
     execute 'cd' l:current_file_dir
     while !filereadable('.vim-arsync') && getcwd() != '/'
         cd ..
@@ -30,6 +30,9 @@ function! LoadConf()
             let l:conf_dict[l:var_name] = l:var_value
         endfor
     endif
+
+    execute 'cd' l:current_file_dir
+
     if !has_key(l:conf_dict, "local_path")
         let l:conf_dict['local_path'] = getcwd()
     endif
@@ -56,7 +59,7 @@ endfunction
 function! JobHandler(job_id, data, event_type)
     " redraw | echom a:job_id . ' ' . a:event_type
     if a:event_type == 'stdout' || a:event_type == 'stderr'
-        " redraw | echom string(a:data)
+        redraw | echom string(a:data)
         if has_key(getqflist({'id' : g:qfid}), 'id')
             call setqflist([], 'a', {'id' : g:qfid, 'lines' : a:data})
         endif
@@ -65,7 +68,7 @@ function! JobHandler(job_id, data, event_type)
             copen
         endif
         if a:data == 0
-            echo "vim-arsync success."
+           echo "Subiu pro remoto."
         endif
         " echom string(a:data)
     endif
